@@ -1,0 +1,25 @@
+=>
+(A*P0).x = v0 + z
+(A*P1).x = v1 + z
+(A*P2).x = v2 + z
+(A*Pz).x = z
+<= z? z->Pz=?
+
+A0*P0.x+A1*P0.y = v0 + z
+A0*P1.x+A1*P1.y = v1 + z
+A0*P2.x+A1*P2.y = v2 + z
+A0*Pz.x+A1*Pz.y = z
+
+
+A0*(P0.x-P1.x)+A1*(P0.y-P1.y) = v0 - v1
+A0*(P2.x-P1.x)+A1*(P2.y-P1.y) = v2 - v1
+
+
+A0 = ((v0 - v1)*(P2.y-P1.y) - (v2 - v1)*(P0.y-P1.y))/((P0.x-P1.x)*(P2.y-P1.y) - (P2.x-P1.x)*(P0.y-P1.y))
+A1 = ((v0 - v1)*(P2.x-P1.x) - (v2 - v1)*(P0.x-P1.x))/((P0.y-P1.y)*(P2.x-P1.x) - (P2.y-P1.y)*(P0.x-P1.x))
+z = A0*P0.x+A1*P0.y - v0
+
+A0*Pz.x+A1*Pz.y = z
+-A1*Pz.x+A0*Pz.y = 0
+
+(A00+A11)*Pz.x = z * A0
