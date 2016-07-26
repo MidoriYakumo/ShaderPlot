@@ -74,12 +74,12 @@ Window {
 	}
 
 	function evaluate(x, y) {
-		return (x*(x-.2) / 2.5 - 5) - y
+//		return (x*(x-.2) / 2.5 - 5) - y
 //		return x*(x-1)+y*y-16
 //		return Math.log(Math.abs(Math.tan(x/2))+.1)/2-y-2.
 //		return Math.atan(Math.sin(x+2)*10-2)-y
 //		return Math.sin(x)%.5-y+4
-//		return (((((.3*x)+.8)*x-.2)*x+5)*2-12)*x-3-y
+		return (((((.3*x)+.8)*x-.2)*x+5)*2-12)*x-3-y
 //		return Math.floor(x)-y-2.
 //		return Math.exp(1./(Math.abs(x+.1)+.2))-y
 //		return (-.9+x)/(.1+Math.abs(1.-x))-1.-y

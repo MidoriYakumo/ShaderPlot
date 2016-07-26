@@ -224,7 +224,7 @@ FP float c=cos(t*PI*2.);
 FP vec2 rt=vec2(c,s);
 
 const FP float c1 = 1.732 * .0625;
-int MAXITER = 15; // can be override
+int MAXITER = 16; // can be override
 
 FP float ep1=(range.y-range.x)/_width;
 FP float ep2=c1*ep1;
@@ -289,6 +289,7 @@ FP vec4 color(FP float x, FP float y){
 		}
 	}
 
+	pz = (pz+pp)/2.;
 	FP float o = hw-distance(sp, pz)/ep1;
 	c = (eval(x,y)>0.)?mix(ac, lc, clamp(o, 0., 1.)):
 		clamp(o, 0., 1.) * lc;
