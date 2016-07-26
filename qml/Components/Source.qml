@@ -67,12 +67,15 @@ uniform vec4 lc;
 uniform vec4 ac;
 
 uniform float _width;
+uniform bool flag0;
+uniform bool flag1;
 
 FP float s=sin(t*PI*2.);
 FP float c=cos(t*PI*2.);
 FP vec2 rt=vec2(c,s);
 
-FP float ep0=(range.y-range.x)*lw/_width;
+FP float ep0=(range.y-range.x)*lw/_width/2.;
+FP float ep1=(range.y-range.x)*(lw+1.)/_width/2.;
 const FP float eps=1e-8;
 
 %2
@@ -93,8 +96,15 @@ FP vec4 color(FP float x, FP float y){
 
 	s-=v;
 	if (v<eps) v=eps;
-	if (s<v*8.) s=v*8.;
-	return eval(x,y)>0.?mix(lc, ac, v*8./s):(1.-v*8./s) * lc;
+	if (flag0)
+		if (flag1)
+			s = pow(clamp((1.-v*8./s)/ep1, 0., 1.), clamp(lw, 1., 30.)); // original space enhanced
+		else
+			s = clamp((1.-v*8./s)/ep1, 0., 1.); // original space
+	else
+		s = clamp((1.-v*8./s), 0., 1.);//blur version
+
+	return eval(x,y)>0.?mix(ac, lc, s):s * lc;
 }
 
 void main() {
@@ -131,7 +141,8 @@ const FP float c2 = 0.707106781187;
 const FP float c3 = 0.382683432365;
 
 FP float ep1=(range.y-range.x)/_width;
-FP float ep3=ep1*(lw+1.)/2.;
+FP float ep2=ep1*(lw+1.)/2.;
+FP float ep3=ep1*(lw/2.+1.);
 
 %2
 
@@ -144,22 +155,22 @@ FP vec4 color(FP float x, FP float y){
 	FP float v[16];
 	FP vec4 c;
 
-	v[0]  = eval(x+ep3, y);
-	v[1]  = eval(x+ep3*c1, y+ep3*c3);
-	v[2]  = eval(x+ep3*c2, y+ep3*c2);
-	v[3]  = eval(x+ep3*c3, y+ep3*c1);
-	v[4]  = eval(x, y+ep3);
-	v[5]  = eval(x-ep3*c3, y+ep3*c1);
-	v[6]  = eval(x-ep3*c2, y+ep3*c2);
-	v[7]  = eval(x-ep3*c1, y+ep3*c3);
-	v[8]  = eval(x-ep3, y);
-	v[9]  = eval(x-ep3*c1, y-ep3*c3);
-	v[10] = eval(x-ep3*c2, y-ep3*c2);
-	v[11] = eval(x-ep3*c3, y-ep3*c1);
-	v[12] = eval(x, y-ep3);
-	v[13] = eval(x+ep3*c3, y-ep3*c1);
-	v[14] = eval(x+ep3*c2, y-ep3*c2);
-	v[15] = eval(x+ep3*c1, y-ep3*c3);
+	v[0]  = eval(x+ep2, y);
+	v[1]  = eval(x+ep2*c1, y+ep2*c3);
+	v[2]  = eval(x+ep2*c2, y+ep2*c2);
+	v[3]  = eval(x+ep2*c3, y+ep2*c1);
+	v[4]  = eval(x, y+ep2);
+	v[5]  = eval(x-ep2*c3, y+ep2*c1);
+	v[6]  = eval(x-ep2*c2, y+ep2*c2);
+	v[7]  = eval(x-ep2*c1, y+ep2*c3);
+	v[8]  = eval(x-ep2, y);
+	v[9]  = eval(x-ep2*c1, y-ep2*c3);
+	v[10] = eval(x-ep2*c2, y-ep2*c2);
+	v[11] = eval(x-ep2*c3, y-ep2*c1);
+	v[12] = eval(x, y-ep2);
+	v[13] = eval(x+ep2*c3, y-ep2*c1);
+	v[14] = eval(x+ep2*c2, y-ep2*c2);
+	v[15] = eval(x+ep2*c1, y-ep2*c3);
 
 	FP float s = sign(v[0]);
 
@@ -174,9 +185,8 @@ FP vec4 color(FP float x, FP float y){
 			dis += v[i]/(v[i]-v[i==15?0:i+1])-v[j]/(v[j]-v[j+1]);
 		if (dis>8.) dis = 16.-dis;
 
-		FP float o = 1.-cos(dis*PI/16.);
-		c = (eval(x,y)>0.)?mix(ac, lc, clamp(o, 0., 1.)):
-			clamp(o, 0., 1.) * lc;
+		FP float o = clamp((1.-cos(dis*PI/16.))/ep3, 0., 1.);
+		c = (eval(x,y)>0.)?mix(ac, lc, o):o*lc;
 	}
 	else
 		c = (eval(x,y)>0.)?ac:vec4(0.);
@@ -213,11 +223,12 @@ FP float s=sin(t*PI*2.);
 FP float c=cos(t*PI*2.);
 FP vec2 rt=vec2(c,s);
 
-const FP float c1 = 1.732 * .5 * .5;
-const int MAXITER = 30;
+const FP float c1 = 1.732 * .0625;
+int MAXITER = 15; // can be override
 
 FP float ep1=(range.y-range.x)/_width;
 FP float ep2=c1*ep1;
+FP float hw=(lw+1.)/2.;
 FP float ep3=ep1*(lw+1.)/2.;
 FP float ep0=ep1*.25*.25;
 
@@ -278,13 +289,9 @@ FP vec4 color(FP float x, FP float y){
 		}
 	}
 
-	FP float o = 1.-distance(sp, pz)/ep3;
+	FP float o = hw-distance(sp, pz)/ep1;
 	c = (eval(x,y)>0.)?mix(ac, lc, clamp(o, 0., 1.)):
 		clamp(o, 0., 1.) * lc;
-//	c = clamp(o, 0., 1.) * lc;
-//	o = float(n)/float(MAXITER);
-//	c = vec4(o, o, o, 1.);
-//	c = vec4(v0, v1, v2, 1.);
 
 	return c;
 }

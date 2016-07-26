@@ -12,7 +12,7 @@ Rectangle {
 	property string customFunc: ""
 	property string exp: (mode == 0) ? exp_color : deEquation(exp_line)
 	property string exp_color: "mod(t,r)/2., mod(t,r), mod(t,r)"
-	property string exp_line: "x+y/c=s"
+	property string exp_line: "(t*t-x*x-y*y)*((((((.3*x)+.8)*x-.2)*x+5.)*2.-12.)*x-3.-y/t)"
 	property vector4d range: Qt.vector4d(-5, 5, -5, 5)
 	property real dts: 1.
 	property real lw: 1.
@@ -78,6 +78,8 @@ Rectangle {
 		property real _hegith: height
 
 		property bool flag0: true
+		property bool flag1: true
+		property bool flag2: true
 
 		fragmentShader: Source.get(mode).arg(root.exp).arg(root.customFunc)
 
