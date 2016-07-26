@@ -129,7 +129,6 @@ uniform float lw;
 uniform vec4 lc;
 uniform vec4 ac;
 uniform bool flag0;
-uniform bool flag1;
 
 uniform float _width;
 
