@@ -10,5 +10,6 @@
         <file>assets/icon@2x.png</file>
         <file>assets/icon@3x.png</file>
         <file>assets/icon@4x.png</file>
+        <file>qml/Components/Controller.qml</file>
     </qresource>
 </RCC>

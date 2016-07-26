@@ -38,6 +38,7 @@ Rectangle {
 	}
 
 	signal resetTime
+	signal pauseTime
 	property real t: 0.
 
 	function deEquation(s) {
@@ -76,7 +77,7 @@ Rectangle {
 		property real _width: width
 		property real _hegith: height
 
-		property bool extra0: true
+		property bool flag0: true
 
 		fragmentShader: Source.get(mode).arg(root.exp).arg(root.customFunc)
 
@@ -168,6 +169,8 @@ Rectangle {
 
 		onTriggered: t += dts * .2
 	}
+
+	onPauseTime: tTimer.running = !tTimer.running
 
 	onResetTime: {
 		tBehavior.enabled = false

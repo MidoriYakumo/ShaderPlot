@@ -20,6 +20,7 @@ A1 = ((v0 - v1)*(P2.x-P1.x) - (v2 - v1)*(P0.x-P1.x))/((P0.y-P1.y)*(P2.x-P1.x) - 
 z = A0*P0.x+A1*P0.y - v0
 
 A0*Pz.x+A1*Pz.y = z
--A1*Pz.x+A0*Pz.y = 0
+-A1*Pz.x+A0*Pz.y = -A1*Pp.x+A0*Pp.y
 
-(A00+A11)*Pz.x = z * A0
+Pz.x = (A0*z+A1*A1*Pp.x-A0*A1*Pp.y)/A2
+Pz.y = (A1*z-A0*A1*Pp.x+A0*A0*Pp.y)/A2

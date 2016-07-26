@@ -1,5 +1,5 @@
 # ShaderPlot
-Full powered QMLxGLSL-based 2D function plot
+Fully QMLxGLSL powered 2D function plotting tool
 
 ![Screencast](./ss/sc.gif)
 

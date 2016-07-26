@@ -7,9 +7,12 @@ ToolBar {
 	Material.foreground: "white"
 	width: parent.width
 
+	property alias nvbg: nvbg
 	property alias timeValue: bTime.text
 	signal resetTime
+	signal pauseTime
 	signal toggleBlend
+	signal detachControl
 
 	RowLayout {
 		spacing: 8
@@ -34,20 +37,22 @@ ToolBar {
 
 		Button {
 			text: app.title
-			implicitHeight: nvbg.height
 			flat: true
+			implicitHeight: nvbg.height
 			font.pixelSize: nvbg.height *.5
 //			font.pointSize: 18
 			onClicked: toggleBlend()
+			onPressAndHold: detachControl()
 		}
 
 		Button {
 			id: bTime
-			implicitHeight: nvbg.height
 			flat: true
+			implicitHeight: nvbg.height
 			font.pixelSize: nvbg.height *.5
 //			font.pointSize: 18
-			onClicked: resetTime()
+			onClicked: pauseTime()
+			onPressAndHold: resetTime()
 		}
 
 		Item {

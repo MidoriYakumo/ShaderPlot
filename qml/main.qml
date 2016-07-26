@@ -1,37 +1,41 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.0
+import QtQuick.Controls.Material 2.0
+import QtQuick.Dialogs 1.2
 
-ApplicationWindow {
-	visible: true
-	width: 640
-	height: 480
-	title: qsTr("Hello World")
+import "Components"
 
-	SwipeView {
-		id: swipeView
-		anchors.fill: parent
-		currentIndex: tabBar.currentIndex
+Item {
+	id: main
+	anchors.fill: parent
 
-		Page1 {
-		}
-
-		Page {
-			Label {
-				text: qsTr("Second page")
-				anchors.centerIn: parent
-			}
-		}
+	QtObject {
+		id: app
+		property string title: "ShaderPlot"
 	}
 
-	footer: TabBar {
-		id: tabBar
-		currentIndex: swipeView.currentIndex
-		TabButton {
-			text: qsTr("First")
+	ColumnLayout {
+		anchors.fill: parent
+
+		DefaultToolBar {
+			Layout.fillWidth: true
+			timeValue: "T=%1".arg(kernel.t.toFixed(2))
+			onPauseTime: kernel.pauseTime()
+			onResetTime: kernel.resetTime()
+			onToggleBlend: kernel.blend = !kernel.blend
 		}
-		TabButton {
-			text: qsTr("Second")
+
+		Plot {
+			id: kernel
+			Layout.fillWidth: true
+			implicitHeight: width * 2./3
 		}
+
+
+		Controller {
+			z: -1
+		}
+
 	}
 }
