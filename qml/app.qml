@@ -2,6 +2,7 @@ import QtQuick 2.7
 import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.0
 import QtQuick.Controls.Material 2.0
+import Qt.labs.settings 1.0
 import "Components"
 
 ApplicationWindow {
@@ -17,12 +18,11 @@ ApplicationWindow {
 		onResetTime: kernel.resetTime()
 		onToggleBlend: kernel.blend = !kernel.blend
 		onDetachControl: {
-			nvbg.enabled = !nvbg.enabled
-			controller.movable = !controller.movable
 			if (dummy.state == "detached")
 				dummy.state = "attached"
 			else
 				dummy.state = "detached"
+			nvbg.enabled = !controller.movable
 		}
 	}
 
@@ -76,6 +76,10 @@ ApplicationWindow {
 					target: controller
 					parent: drawCol
 				}
+				PropertyChanges {
+					target: controller
+					movable: false
+				}
 			},
 			State {
 				name: "detached"
@@ -88,8 +92,22 @@ ApplicationWindow {
 					x: /*8 + */48
 					y: 8
 				}
+				PropertyChanges {
+					target: controller
+					movable: true
+				}
 			}
 
 		]
+
+		Settings {
+			id: settings
+			property alias app_x: app.x
+			property alias app_y: app.y
+			property alias app_width: app.width
+			property alias app_height: app.height
+			property alias app_state: dummy.state
+		}
+
 	}
 }

@@ -67,8 +67,8 @@ uniform vec4 lc;
 uniform vec4 ac;
 
 uniform float _width;
-uniform bool flag0;
 uniform bool flag1;
+uniform bool flag2;
 
 FP float s=sin(t*PI*2.);
 FP float c=cos(t*PI*2.);
@@ -96,8 +96,8 @@ FP vec4 color(FP float x, FP float y){
 
 	s-=v;
 	if (v<eps) v=eps;
-	if (flag0)
-		if (flag1)
+	if (flag1)
+		if (flag2)
 			s = pow(clamp((1.-v*8./s)/ep1, 0., 1.), clamp(lw, 1., 30.)); // original space enhanced
 		else
 			s = clamp((1.-v*8./s)/ep1, 0., 1.); // original space
@@ -129,6 +129,7 @@ uniform float lw;
 uniform vec4 lc;
 uniform vec4 ac;
 uniform bool flag0;
+uniform bool flag1;
 
 uniform float _width;
 
@@ -186,11 +187,11 @@ FP vec4 color(FP float x, FP float y){
 		if (dis>8.) dis = 16.-dis;
 
 		FP float o = clamp((1.-cos(dis*PI/16.))/ep3, 0., 1.);
+		//o = dis*PI/16.;
 		c = (eval(x,y)>0.)?mix(ac, lc, o):o*lc;
 	}
 	else
 		c = (eval(x,y)>0.)?ac:vec4(0.);
-//		c = vec4(0.);
 
 	return c;
 }
@@ -218,6 +219,7 @@ uniform vec4 lc;
 uniform vec4 ac;
 
 uniform float _width;
+uniform bool flag2;
 
 FP float s=sin(t*PI*2.);
 FP float c=cos(t*PI*2.);
@@ -226,11 +228,11 @@ FP vec2 rt=vec2(c,s);
 const FP float c1 = 1.732 * .0625;
 int MAXITER = 16; // can be override
 
-FP float ep1=(range.y-range.x)/_width;
-FP float ep2=c1*ep1;
 FP float hw=(lw+1.)/2.;
-FP float ep3=ep1*(lw+1.)/2.;
-FP float ep0=ep1*.25*.25;
+FP float ep1=(range.y-range.x)/_width;
+FP float ep0=ep1/128.;
+FP float ep2=c1*ep1;
+FP float ep3=ep1*hw;
 
 %2
 
@@ -239,8 +241,6 @@ FP float eval(FP float x, FP float y) {
 }
 
 FP vec4 color(FP float x, FP float y){
-	FP vec4 c;
-
 	int n = MAXITER;
 	FP vec2 p0, p1, p2, pz, sp, pp, rp;
 	FP float v0, v1, v2, a0, a1, a01, a02, a12, z, t;
@@ -265,11 +265,12 @@ FP vec4 color(FP float x, FP float y){
 		a01 = a0*a1;
 
 		z = a0*pp.x+a1*pp.y - eval(pp.x, pp.y);
+		//z = a0*p0.x+a1*p0.y - v0;
 		pz = vec2(a0*z+a12*rp.x-a01*rp.y, a1*z-a01*rp.x+a02*rp.y);
 		pz /= a02+a12;
 
 		if (distance(pp, pz)<ep0)
-			n = 0;
+			break;
 		else {
 			pp = pz;
 			v0 = abs(v0);
@@ -290,11 +291,17 @@ FP vec4 color(FP float x, FP float y){
 	}
 
 	pz = (pz+pp)/2.;
-	FP float o = hw-distance(sp, pz)/ep1;
-	c = (eval(x,y)>0.)?mix(ac, lc, clamp(o, 0., 1.)):
+	FP float o;
+	if (flag2) // debug
+		o = float(n)/float(MAXITER);
+		//o = z;
+	else
+		o = hw-distance(sp, pz)/ep1;
+	FP vec4 c = (eval(x,y)>0.)?mix(ac, lc, clamp(o, 0., 1.)):
 		clamp(o, 0., 1.) * lc;
 
 	return c;
+//	return vec4(a0, a1, 0., 1.);
 }
 
 void main() {

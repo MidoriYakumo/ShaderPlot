@@ -22,15 +22,9 @@ Rectangle {
 		width: root.width
 		height: root.movable?48:0
 		color: Material.primary
+		clip: true
 
-		Label {
-			anchors.left: parent.left
-			anchors.leftMargin: 8
-			anchors.verticalCenter: parent.verticalCenter
-			color: "white"
-			font.pixelSize: 48*.6
-			text: "Options"
-		}
+		Material.foreground: "white"
 
 		MouseArea {
 			id: dragger
@@ -38,6 +32,53 @@ Rectangle {
 			enabled: root.movable
 			drag.target: root
 		}
+
+		RowLayout {
+			anchors.fill: handler
+
+			Label {
+				anchors.left: parent.left
+				anchors.leftMargin: 8
+				anchors.verticalCenter: parent.verticalCenter
+				font.pixelSize: 48*.6
+				text: "Options"
+			}
+
+			CheckBox {
+				id: cF0
+				text: "f0"
+				font.pixelSize: 16
+				checked: kernel.flag0
+				Binding {
+					target: kernel
+					property: "flag0"
+					value: cF0.checked
+				}
+			}
+			CheckBox {
+				id: cF1
+				text: "f1"
+				font.pixelSize: 16
+				checked: kernel.flag1
+				Binding {
+					target: kernel
+					property: "flag2"
+					value: cF1.checked
+				}
+			}
+			CheckBox {
+				id: cF2
+				text: "f2"
+				font.pixelSize: 16
+				checked: kernel.flag2
+				Binding {
+					target: kernel
+					property: "flag2"
+					value: cF2.checked
+				}
+			}
+		}
+
 	}
 
 	Flickable {

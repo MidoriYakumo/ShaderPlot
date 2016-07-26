@@ -20,6 +20,10 @@ Rectangle {
 	property color ac: "lightblue"
 	property bool blend: true
 
+	property bool flag0: true
+	property bool flag1: true
+	property bool flag2: false
+
 	property real rxTickStep: Math.pow(10., Math.round(Math.log((range.y-range.x)/4.)/Math.log(10)))
 	property real ryTickStep: Math.pow(10., Math.round(Math.log((range.w-range.z)/4.)/Math.log(10)))
 
@@ -35,6 +39,11 @@ Rectangle {
 		property alias lc: root.lc
 		property alias ac: root.ac
 		property alias blend: root.blend
+
+		property alias flag0: root.flag0
+		property alias flag1: root.flag1
+		property alias flag2: root.flag2
+
 	}
 
 	signal resetTime
@@ -77,9 +86,9 @@ Rectangle {
 		property real _width: width
 		property real _hegith: height
 
-		property bool flag0: true
-		property bool flag1: true
-		property bool flag2: true
+		property alias flag0: root.flag0
+		property alias flag1: root.flag1
+		property alias flag2: root.flag2
 
 		fragmentShader: Source.get(mode).arg(root.exp).arg(root.customFunc)
 
