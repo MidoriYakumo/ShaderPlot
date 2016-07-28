@@ -22,7 +22,7 @@ ApplicationWindow {
 				dummy.state = "attached"
 			else
 				dummy.state = "detached"
-			nvbg.enabled = !controller.movable
+			//nvbg.enabled = !controller.movable
 		}
 	}
 

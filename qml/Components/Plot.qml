@@ -9,15 +9,56 @@ Rectangle {
 	color: "white" // valid when blend = true
 
 	property int mode: 0
-	property string customFunc: ""
+	property string customFunc: "
+FP float persp0(float x,float y){return abs(mod(x,y/10.-1.)*mod(y,1.))<.3?0.:1.;}
+FP float persp1(float x,float y){return mod(x-2.*c,5.-y*s)*mod((y+t)*s,(5.-y*s));}
+FP float morph0(float x, float y){return y/tan(x)-sin(x+t);}
+FP float expt1 = exp(t)-1.;
+FP float norm(float x, float y){return pow(9.,expt1)-pow(x,expt1)-pow(y,expt1);}
+FP float wave0(float x, float y){return y/x-sin(x+t);}
+FP float wave1(float x, float y){return sin(x*x+y*y+t);}
+FP float star0(float x, float y){return sin(t*x*y);}
+FP float div0(float x, float y){return y*y-sin(x*x-t);}
+FP float v8wave(float x, float y){return lxy-sin(x*x+y*y-t);}
+FP float v8body0(float x, float y){return distance(xy2,vec2(cos(t),sin(t-4.)));}
+FP float v8body1(float x, float y){return distance(xy2,vec2(cos(t-2.),sin(t-6.)));}
+FP float v8body2(float x, float y){return distance(xy2,vec2(cos(t-1.),sin(t-8.)));}
+FP float v8body(float x, float y){return v8body0(x,y)*v8body1(x,y)*v8body2(x,y);}
+FP float tension(float x, float y){return cross(vec3(rt,t),vec3(xy2,5.)).y*lxy-5.;}
+FP float roundtangle(float x, float y){return x*(x+3.5)*(x-3.5)*y*(y+2.5)*(y-1.5)-s*35.;}
+
+FP float displacement(FP vec3 p)
+{
+p.xz *= rot2;
+p.xy *= rot2;
+FP vec3 q = 1.75 * p;
+return length(p + vec3(s)) * log(length(p) + 1.0) +
+sin(q.x + sin(q.z + sin(q.y))) * 0.25 - 1.0;
+}
+
+vec3 plasma(FP float x, FP float y){
+FP vec3 color;
+FP float d = 2.5;
+FP vec3 pos = normalize(vec3(xy2, -1.0));
+for (int i = 0; i < 8; ++i) {
+	FP vec3 p = vec3(0.0, 0.0, 5.0) + pos * d;
+	FP float positionFactor = displacement(p);
+	d += min(positionFactor, 1.0);
+	FP float clampFactor =  clamp((positionFactor- displacement(p + 0.1)) * 0.5, -0.1, 1.0);
+	FP vec3 l = vec3(0.2 * s, 0.35, 0.4) + vec3(5.0, 2.5, 3.25) * clampFactor;
+	color = (color + (1.0 - smoothstep(0.0, 2.5, positionFactor)) * 0.7) * l;
+}
+return vec3(s+x, c+y, lxy)*.5 + color;
+}
+	"
 	property string exp: (mode == 0) ? exp_color : deEquation(exp_line)
-	property string exp_color: "mod(t,r)/2., mod(t,r), mod(t,r)"
-	property string exp_line: "(t*t-x*x-y*y)*((((((.3*x)+.8)*x-.2)*x+5.)*2.-12.)*x-3.-y/t)"
+	property string exp_color: "plasma(x/7.,y/7.)"
+	property string exp_line: "div0(x,y)*v8wave(x,y)"
 	property vector4d range: Qt.vector4d(-5, 5, -5, 5)
 	property real dts: 1.
-	property real lw: 1.
-	property color lc: "red"
-	property color ac: "lightblue"
+	property real lw: 2.
+	property color lc: "#ff3a86"
+	property color ac: "#6055a7ff"
 	property bool blend: true
 
 	property bool flag0: true

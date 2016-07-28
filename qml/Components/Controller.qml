@@ -62,7 +62,7 @@ Rectangle {
 				checked: kernel.flag1
 				Binding {
 					target: kernel
-					property: "flag2"
+					property: "flag1"
 					value: cF1.checked
 				}
 			}
@@ -307,13 +307,33 @@ Rectangle {
 				border.width: 2
 				border.color: customFunc.focus ? Material.accent : Material.primary
 				clip: true
-				TextEdit {
-					id: customFunc
+				Flickable {
+					id: customFlick
 					anchors.fill: parent
 					anchors.margins: 8
-					text: kernel.customFunc
+					contentWidth: width
+					contentHeight: customFunc.paintedHeight
 
-					onEditingFinished: kernel.customFunc = text
+					function ensureVisible(r) {
+					   if (contentX >= r.x)
+						   contentX = r.x;
+					   else if (contentX+width <= r.x+r.width)
+						   contentX = r.x+r.width-width;
+					   if (contentY >= r.y)
+						   contentY = r.y;
+					   else if (contentY+height <= r.y+r.height)
+						   contentY = r.y+r.height-height;
+				   }
+
+					TextEdit {
+						id: customFunc
+						width: parent.width
+						text: kernel.customFunc
+						wrapMode: TextEdit.Wrap
+
+						onEditingFinished: kernel.customFunc = text
+						onCursorRectangleChanged: customFlick.ensureVisible(cursorRectangle)
+					}
 				}
 			}
 		}

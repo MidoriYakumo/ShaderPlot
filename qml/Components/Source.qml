@@ -25,9 +25,9 @@ QtObject {
 	readonly property string colorSource:"
 #define FP	highp
 #define PI	3.14159265359
-#define xy	(vec2(x,y))
+#define xy2	(vec2(x,y))
 #define xyt	(vec3(x,y,t))
-#define r	(length(xy))
+#define lxy	(length(xy2))
 varying vec2 qt_TexCoord0;
 
 uniform float qt_Opacity;
@@ -37,6 +37,7 @@ uniform vec4 range;
 FP float s=sin(t*PI*2.);
 FP float c=cos(t*PI*2.);
 FP vec2 rt=vec2(c,s);
+FP mat2 rot2=mat2(c, -s, s, c);
 
 %2
 
@@ -54,9 +55,9 @@ void main() {
 	readonly property string simpleSource:"
 #define FP	highp
 #define PI	3.14159265359
-#define xy	(vec2(x,y))
+#define xy2	(vec2(x,y))
 #define xyt	(vec3(x,y,t))
-#define r	(length(xy))
+#define lxy	(length(xy2))
 varying vec2 qt_TexCoord0;
 
 uniform float qt_Opacity;
@@ -73,6 +74,7 @@ uniform bool flag2;
 FP float s=sin(t*PI*2.);
 FP float c=cos(t*PI*2.);
 FP vec2 rt=vec2(c,s);
+FP mat2 rot2=mat2(c, -s, s, c);
 
 FP float ep0=(range.y-range.x)*lw/_width/2.;
 FP float ep1=(range.y-range.x)*(lw+1.)/_width/2.;
@@ -117,9 +119,9 @@ void main() {
 	readonly property string roundSource:"
 #define FP	highp
 #define PI	3.14159265359
-#define xy	(vec2(x,y))
+#define xy2	(vec2(x,y))
 #define xyt	(vec3(x,y,t))
-#define r	(length(xy))
+#define lxy	(length(xy2))
 varying vec2 qt_TexCoord0;
 
 uniform float qt_Opacity;
@@ -135,6 +137,7 @@ uniform float _width;
 FP float s=sin(t*PI*2.);
 FP float c=cos(t*PI*2.);
 FP vec2 rt=vec2(c,s);
+FP mat2 rot2=mat2(c, -s, s, c);
 
 const FP float c1 = 0.923879532511;
 const FP float c2 = 0.707106781187;
@@ -205,9 +208,9 @@ void main() {
 	readonly property string newtonSource:"
 #define FP	highp
 #define PI	3.14159265359
-#define xy	(vec2(x,y))
+#define xy2	(vec2(x,y))
 #define xyt	(vec3(x,y,t))
-#define r	(length(xy))
+#define lxy	(length(xy2))
 varying vec2 qt_TexCoord0;
 
 uniform float qt_Opacity;
@@ -223,6 +226,7 @@ uniform bool flag2;
 FP float s=sin(t*PI*2.);
 FP float c=cos(t*PI*2.);
 FP vec2 rt=vec2(c,s);
+FP mat2 rot2=mat2(c, -s, s, c);
 
 const FP float c1 = 1.732 * .0625;
 int MAXITER = 16; // can be override
