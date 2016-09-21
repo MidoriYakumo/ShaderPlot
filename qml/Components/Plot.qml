@@ -1,5 +1,6 @@
-import QtQuick 2.0
+import QtQuick 2.7
 import Qt.labs.settings 1.0
+import QtQuick.Window 2.2
 
 import "."
 
@@ -13,8 +14,10 @@ Rectangle {
 FP float persp0(float x,float y){return abs(mod(x,y/10.-1.)*mod(y,1.))<.3?0.:1.;}
 FP float persp1(float x,float y){return mod(x-2.*c,5.-y*s)*mod((y+t)*s,(5.-y*s));}
 FP float morph0(float x, float y){return y/tan(x)-sin(x+t);}
+FP float norm(float x, float y){
 FP float expt1 = exp(t)-1.;
-FP float norm(float x, float y){return pow(9.,expt1)-pow(x,expt1)-pow(y,expt1);}
+return pow(9.,expt1)-pow(x,expt1)-pow(y,expt1);
+}
 FP float wave0(float x, float y){return y/x-sin(x+t);}
 FP float wave1(float x, float y){return sin(x*x+y*y+t);}
 FP float star0(float x, float y){return sin(t*x*y);}
@@ -92,16 +95,20 @@ return vec3(s+x, c+y, lxy)*.5 + color;
 	property real t: 0.
 
 	function deEquation(s) {
+		var foundEqual = false
 		var i = s.indexOf("=")
 		while (i > 0) {
 			if (s[i + 1] !== '=') {
-				s = s.substring(0, i) + '-' + s.substring(i + 1)
-				i += 1
+				s = s.substring(0, i) + ')-(' + s.substring(i + 1)
+				i += 4
+				foundEqual = true
 			} else
 				i += 2
 			i = s.indexOf("=", i)
 		}
-		//		console.log('Final sression:%1'.arg(s))
+		if (foundEqual)
+			s = '(' + s + ')'
+		//		console.log('Final sression:%1'.arg(s))"
 		return s
 	}
 
@@ -132,6 +139,7 @@ return vec3(s+x, c+y, lxy)*.5 + color;
 		property alias flag2: root.flag2
 
 		fragmentShader: Source.get(mode).arg(root.exp).arg(root.customFunc)
+			.arg((OpenGLInfo.majorVersion>=3 && OpenGLInfo.renderableType===2)?"precision FP float;":"")
 
 		Behavior on t {
 			id: tBehavior
@@ -146,8 +154,11 @@ return vec3(s+x, c+y, lxy)*.5 + color;
 
 	Canvas {
 		id: tick
-		anchors.fill: plot
-		property real padding: 8
+		anchors.centerIn: plot
+		width: plot.width/scale
+		height: plot.height/scale
+		scale: 80/25.4/Screen.pixelDensity
+		property real padding: 14
 		onPaint: {
 			var ctx = tick.getContext("2d")
 			ctx.reset()
@@ -167,7 +178,7 @@ return vec3(s+x, c+y, lxy)*.5 + color;
 
 			var t
 			t = Math.ceil(range.x/rxTickStep)*rxTickStep
-			ctx.font = "20px sans serif";
+			ctx.font = "28px sans serif";
 			while (t<range.y) {
 				ctx.moveTo((t-range.x)*w/(range.y-range.x), h-margin)
 				ctx.lineTo((t-range.x)*w/(range.y-range.x), h-2*margin)

@@ -1,6 +1,6 @@
 pragma Singleton
 
-import QtQuick 2.0
+import QtQuick 2.7
 
 QtObject {
 	id: root
@@ -24,6 +24,7 @@ QtObject {
 
 	readonly property string colorSource:"
 #define FP	highp
+%3
 #define PI	3.14159265359
 #define xy2	(vec2(x,y))
 #define xyt	(vec3(x,y,t))
@@ -34,10 +35,10 @@ uniform float qt_Opacity;
 uniform float t;
 uniform vec4 range;
 
-FP float s=sin(t*PI*2.);
-FP float c=cos(t*PI*2.);
-FP vec2 rt=vec2(c,s);
-FP mat2 rot2=mat2(c, -s, s, c);
+FP float	s;
+FP float	c;
+FP vec2		rt;
+FP mat2		rot2;
 
 %2
 
@@ -46,6 +47,11 @@ FP vec3 eval(FP float x, FP float y) {
 }
 
 void main() {
+	s=sin(t*PI*2.);
+	c=cos(t*PI*2.);
+	rt=vec2(c,s);
+	rot2=mat2(c, -s, s, c);
+
 	FP float x = mix(range.x, range.y, qt_TexCoord0.x);
 	FP float y = mix(range.w, range.z, qt_TexCoord0.y);
 	gl_FragColor = vec4(eval(x, y), 1.) * qt_Opacity;
@@ -54,6 +60,7 @@ void main() {
 
 	readonly property string simpleSource:"
 #define FP	highp
+%3
 #define PI	3.14159265359
 #define xy2	(vec2(x,y))
 #define xyt	(vec3(x,y,t))
@@ -71,13 +78,14 @@ uniform float _width;
 uniform bool flag1;
 uniform bool flag2;
 
-FP float s=sin(t*PI*2.);
-FP float c=cos(t*PI*2.);
-FP vec2 rt=vec2(c,s);
-FP mat2 rot2=mat2(c, -s, s, c);
+FP float	s		;
+FP float	c		;
+FP vec2		rt		;
+FP mat2		rot2	;
 
-FP float ep0=(range.y-range.x)*lw/_width/2.;
-FP float ep1=(range.y-range.x)*(lw+1.)/_width/2.;
+FP float	ep0		;
+FP float	ep1		;
+
 const FP float eps=1e-8;
 
 %2
@@ -110,6 +118,14 @@ FP vec4 color(FP float x, FP float y){
 }
 
 void main() {
+	s=sin(t*PI*2.);
+	c=cos(t*PI*2.);
+	rt=vec2(c,s);
+	rot2=mat2(c, -s, s, c);
+
+	ep0=(range.y-range.x)*lw/_width/2.;
+	ep1=(range.y-range.x)*(lw+1.)/_width/2.;
+
 	FP float x = mix(range.x, range.y, qt_TexCoord0.x);
 	FP float y = mix(range.w, range.z, qt_TexCoord0.y);
 	gl_FragColor = color(x, y) * qt_Opacity;
@@ -118,6 +134,7 @@ void main() {
 
 	readonly property string roundSource:"
 #define FP	highp
+%3
 #define PI	3.14159265359
 #define xy2	(vec2(x,y))
 #define xyt	(vec3(x,y,t))
@@ -134,18 +151,18 @@ uniform bool flag0;
 
 uniform float _width;
 
-FP float s=sin(t*PI*2.);
-FP float c=cos(t*PI*2.);
-FP vec2 rt=vec2(c,s);
-FP mat2 rot2=mat2(c, -s, s, c);
+FP float	s	;
+FP float	c	;
+FP vec2		rt	;
+FP mat2		rot2;
+
+FP float	ep1 ;
+FP float	ep2 ;
+FP float	ep3 ;
 
 const FP float c1 = 0.923879532511;
 const FP float c2 = 0.707106781187;
 const FP float c3 = 0.382683432365;
-
-FP float ep1=(range.y-range.x)/_width;
-FP float ep2=ep1*(lw+1.)/2.;
-FP float ep3=ep1*(lw/2.+1.);
 
 %2
 
@@ -199,6 +216,15 @@ FP vec4 color(FP float x, FP float y){
 }
 
 void main() {
+	s=sin(t*PI*2.);
+	c=cos(t*PI*2.);
+	rt=vec2(c,s);
+	rot2=mat2(c, -s, s, c);
+
+	ep1=(range.y-range.x)/_width;
+	ep2=ep1*(lw+1.)/2.;
+	ep3=ep1*(lw/2.+1.);
+
 	FP float x = mix(range.x, range.y, qt_TexCoord0.x);
 	FP float y = mix(range.w, range.z, qt_TexCoord0.y);
 	gl_FragColor = color(x, y) * qt_Opacity;
@@ -207,6 +233,7 @@ void main() {
 
 	readonly property string newtonSource:"
 #define FP	highp
+%3
 #define PI	3.14159265359
 #define xy2	(vec2(x,y))
 #define xyt	(vec3(x,y,t))
@@ -223,19 +250,19 @@ uniform vec4 ac;
 uniform float _width;
 uniform bool flag2;
 
-FP float s=sin(t*PI*2.);
-FP float c=cos(t*PI*2.);
-FP vec2 rt=vec2(c,s);
-FP mat2 rot2=mat2(c, -s, s, c);
+FP float s		;
+FP float c		;
+FP vec2  rt		;
+FP mat2  rot2	;
+
+FP float hw		;
+FP float ep1	;
+FP float ep0	;
+FP float ep2	;
+FP float ep3	;
 
 const FP float c1 = 1.732 * .0625;
 int MAXITER = 16; // can be override
-
-FP float hw=(lw+1.)/2.;
-FP float ep1=(range.y-range.x)/_width;
-FP float ep0=ep1/128.;
-FP float ep2=c1*ep1;
-FP float ep3=ep1*hw;
 
 %2
 
@@ -308,6 +335,17 @@ FP vec4 color(FP float x, FP float y){
 }
 
 void main() {
+	s=sin(t*PI*2.);
+	c=cos(t*PI*2.);
+	rt=vec2(c,s);
+	rot2=mat2(c, -s, s, c);
+
+	hw=(lw+1.)/2.;
+	ep1=(range.y-range.x)/_width;
+	ep0=ep1/128.;
+	ep2=c1*ep1;
+	ep3=ep1*hw;
+
 	FP float x = mix(range.x, range.y, qt_TexCoord0.x);
 	FP float y = mix(range.w, range.z, qt_TexCoord0.y);
 	gl_FragColor = color(x, y) * qt_Opacity;

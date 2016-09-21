@@ -1,4 +1,5 @@
 import QtQuick 2.7
+import QtQuick.Dialogs 1.2
 import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.0
 import QtQuick.Controls.Material 2.0
@@ -16,7 +17,20 @@ ApplicationWindow {
 		timeValue: "T=%1".arg(kernel.t.toFixed(2))
 		onPauseTime: kernel.pauseTime()
 		onResetTime: kernel.resetTime()
-		onToggleBlend: kernel.blend = !kernel.blend
+		onToggleBlend: {
+			kernel.grabToImage(function(result) {
+				var r = kernel.exp
+				var escapeList = [':', '/', '*', '\\', '>', '<', '!']
+				for (var i in escapeList)
+					r.replace(escapeList[i], '_')
+				result.saveToFile("%1/ShaderPlot[%2](T=%3).png"
+								  .arg(pathDialog.shortcuts.pictures.replace("file://", ""))
+								  .arg(r)
+								  .arg(kernel.blend?kernel.t:-kernel.t)
+				)
+			})
+			kernel.blend = !kernel.blend
+		}
 		onDetachControl: {
 			if (dummy.state == "detached")
 				dummy.state = "attached"
@@ -109,5 +123,10 @@ ApplicationWindow {
 			property alias app_state: dummy.state
 		}
 
+	}
+
+	FileDialog {
+		id: pathDialog
+		visible: false
 	}
 }
