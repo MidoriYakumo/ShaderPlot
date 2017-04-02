@@ -1,1 +1,4 @@
-singleton Source 1.0 Source.qml
+Controller Controller.qml
+DefaultToolBar DefaultToolBar.qml
+Plot Plot.qml
+singleton Source Source.qml
